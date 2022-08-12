@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import jakarta.json.stream.JsonParser;
 import vttp2022.ssfassessment.model.Article;
 import vttp2022.ssfassessment.model.ArticleSaveObj;
 import vttp2022.ssfassessment.model.NewsArticles;
@@ -58,7 +59,7 @@ public class NewsController {
     @PostMapping("/articles")
     public String saveArticles(@ModelAttribute ArticleSaveObj articlesToSave, Model model) {
         logger.info("staticList >>> " + staticList.size());
-        // logger.info("staticList >>> " + staticList.toString());
+        logger.info("staticList >>> " + staticList.toString());
         logger.info("saveobj >>>>>> " + articlesToSave.getArticleList().toString());
         List<String> saveArticlesList = articlesToSave.getArticleList();
         for(String articleId:saveArticlesList) {
@@ -68,7 +69,20 @@ public class NewsController {
                 }
             }
         }
-        return "saved";
+        Optional<NewsArticles> allNews = newsService.getArticles();
+        // logger.info(allNews.get().toString());
+        if(allNews.isEmpty()) {
+            logger.info("inside news empty block");
+            return "api";
+        } else {
+            List<Article> listOfArticles = NewsController.createListOfArticles(allNews.get());
+            staticList = listOfArticles;
+            // logger.info(listOfArticles.toString());
+            logger.info("adding attributes to model");
+            model.addAttribute("articles", listOfArticles);
+            model.addAttribute("NewsArticlesObj", new ArticleSaveObj());
+            return "index";
+        }
     }
 
     private static List<Article> createListOfArticles(NewsArticles articles) {
