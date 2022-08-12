@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import jakarta.json.stream.JsonParser;
 import vttp2022.ssfassessment.model.Article;
 import vttp2022.ssfassessment.model.ArticleSaveObj;
 import vttp2022.ssfassessment.model.NewsArticles;
@@ -35,6 +34,8 @@ public class NewsController {
     @Autowired
     ArticlesRedis redisSvc;
 
+    private static List<Article> staticList;
+
     @GetMapping("/")
     public String showLanguagePage(Model model) {
         logger.info("Showing news page");
@@ -45,6 +46,7 @@ public class NewsController {
             return "api";
         } else {
             List<Article> listOfArticles = NewsController.createListOfArticles(allNews.get());
+            staticList = listOfArticles;
             // logger.info(listOfArticles.toString());
             logger.info("adding attributes to model");
             model.addAttribute("articles", listOfArticles);
@@ -55,11 +57,16 @@ public class NewsController {
 
     @PostMapping("/articles")
     public String saveArticles(@ModelAttribute ArticleSaveObj articlesToSave, Model model) {
-        logger.info("saveobj >>>>>> " + articlesToSave.toString());
-        List saveArticlesList = articlesToSave.getArticleList();
-        for(int i = 0; i < saveArticlesList.size(); i++) {
-            Article tempArticle = (Article) saveArticlesList.get(0);
-            redisSvc.save(tempArticle);
+        logger.info("staticList >>> " + staticList.size());
+        // logger.info("staticList >>> " + staticList.toString());
+        logger.info("saveobj >>>>>> " + articlesToSave.getArticleList().toString());
+        List<String> saveArticlesList = articlesToSave.getArticleList();
+        for(String articleId:saveArticlesList) {
+            for(int i = 0; i < staticList.size(); i++) {
+                if(staticList.get(i).getId().equals(articleId)) {
+                    redisSvc.save(staticList.get(i));
+                }
+            }
         }
         return "saved";
     }

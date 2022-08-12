@@ -35,8 +35,10 @@ public class RedisConfig {
         final RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisHost);
         config.setPort(redisPort.get());
-        config.setPassword(System.getenv("REDIS_PASSWORD"));
-        RedisSerializer<Object> serializer = new JdkSerializationRedisSerializer(getClass().getClassLoader());
+        String redisPassword = System.getenv("REDIS_PASSWORD");
+        logger.info("redis pw >>>>> " + System.getenv("REDIS_PASSWORD"));
+        config.setPassword(redisPassword);
+        Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer<>(Article.class);
         
         final JedisClientConfiguration jedisClient = JedisClientConfiguration.builder().build();
         final JedisConnectionFactory jedisFac = new JedisConnectionFactory(config, jedisClient);

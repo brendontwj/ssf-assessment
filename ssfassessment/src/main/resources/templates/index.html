@@ -32,7 +32,7 @@
                     <p data-th-text="${article.categories}"></p>
                     <form action="#" th:action="@{/articles}" th:object="${NewsArticlesObj}" method="post">
                     <span>
-                        <input type="checkbox" th:field="${NewsArticlesObj.articleList}" th:value="${article}">
+                        <input type="checkbox" th:field="${NewsArticlesObj.articleList}" th:value="${article.id}">
                     </span>
                     <button type="submit" class="btn btn-warning btn-lg">
                         Save
