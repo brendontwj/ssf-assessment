@@ -19,11 +19,9 @@ public class ArticlesRedis implements ArticlesRepo{
     RedisTemplate<String, Article> template;
 
     @Override
-    public void save(final List<Article> listOfArticles) {
-        for(int i = 0; i < listOfArticles.size(); i++) {
-            template.opsForValue().set(listOfArticles.get(i).getId(), listOfArticles.get(i));
-            logger.info("Saving article named >>>>> " + listOfArticles.get(i).getTitle());
-        }
+    public void save(Article article) {
+        template.opsForValue().set(article.getId(), article);
+        logger.info("Saving article named >>>>> " + article.getTitle());
     }
 
     @Override

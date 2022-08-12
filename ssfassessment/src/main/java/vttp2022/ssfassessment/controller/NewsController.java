@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import jakarta.json.stream.JsonParser;
 import vttp2022.ssfassessment.model.Article;
 import vttp2022.ssfassessment.model.ArticleSaveObj;
 import vttp2022.ssfassessment.model.NewsArticles;
@@ -56,7 +57,10 @@ public class NewsController {
     public String saveArticles(@ModelAttribute ArticleSaveObj articlesToSave, Model model) {
         logger.info("saveobj >>>>>> " + articlesToSave.toString());
         List saveArticlesList = articlesToSave.getArticleList();
-        redisSvc.save(saveArticlesList);
+        for(int i = 0; i < saveArticlesList.size(); i++) {
+            Article tempArticle = (Article) saveArticlesList.get(0);
+            redisSvc.save(tempArticle);
+        }
         return "saved";
     }
 

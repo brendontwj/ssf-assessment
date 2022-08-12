@@ -1,1 +1,0 @@
-https://ssfassessment-app.herokuapp.com/ | https://git.heroku.com/ssfassessment-app.git

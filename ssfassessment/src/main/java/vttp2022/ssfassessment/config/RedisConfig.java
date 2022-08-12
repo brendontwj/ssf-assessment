@@ -29,16 +29,13 @@ public class RedisConfig {
     @Value("${spring.redis.port}")
     private Optional<Integer> redisPort;
 
-    @Value("${spring.redis.password}")
-    private String redisPassword;
-
     @Bean(name = "crypto")
     @Scope("singleton")
     public RedisTemplate<String, Article> redisTemplate() {
         final RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisHost);
         config.setPort(redisPort.get());
-        config.setPassword(redisPassword);
+        config.setPassword(System.getenv("REDIS_PASSWORD"));
         RedisSerializer<Object> serializer = new JdkSerializationRedisSerializer(getClass().getClassLoader());
         
         final JedisClientConfiguration jedisClient = JedisClientConfiguration.builder().build();
